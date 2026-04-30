@@ -1,3 +1,54 @@
+# 📅 Schedule Butler (日程管家)
+
+An **all-in-one cross-platform life and memory assistant**. Whether it's a business meeting, student classes, outdoor activities, or daily medication reminders, just send a simple message. The Schedule Butler will alert you at the critical moments so you never miss an important event again!
+
+*[For the Chinese version, please scroll down. / 中文说明请见下方]*
+
+## 🌟 Key Features
+- **All-Scenario Coverage**: Supports work meetings, assignment deadlines, doctor appointments, medication routines, and more.
+- **Natural Language Parsing**: Just tell the bot "Take blood pressure medicine tomorrow at 3 PM" or "Raid night on Friday at 8 PM". It automatically extracts the time and event and saves it.
+- **Tiered Reminder System**:
+  - **20:00 the day before**: A daily briefing of tomorrow's schedule.
+  - **30 minutes before**: An upcoming event warning.
+  - **5 minutes before**: An urgent "starting now" red alert.
+- **Cross-Platform Multi-Channel Support**:
+  - **Telegram (Recommended for Overseas)**: Seamless integration, lightweight, and stable.
+  - **Feishu / Lark (Recommended for China)**: Supports OCR for images and rich-text card notifications.
+
+---
+
+## 🚀 Easy One-Click Deployment (For Beginners)
+
+Whether you are on Windows, Mac, or Linux, there is no complex setup required:
+
+1. **Prerequisites**: Make sure you have `Python 3.10+` installed on your computer.
+2. **Copy Config**: Copy the `.env.example` file in the directory and rename it to `.env`.
+3. **Fill in Tokens**: Open `.env` with a text editor. Fill in your LLM configuration (Supports Kimi, DeepSeek, ChatGPT, etc.) and your bot channel configuration (e.g., Telegram Bot Token).
+4. **One-Click Start**:
+   - **Windows Users**: Double-click `start.bat`.
+   - **Mac/Linux Users**: Run `bash start.sh` in your terminal.
+
+The script will automatically create a virtual environment, install necessary dependencies, and start the bot!
+
+---
+
+## 🛠️ Docker Deployment (For Geeks)
+If you prefer using Docker to keep your environment clean:
+```bash
+docker-compose up -d
+```
+
+---
+
+## 📝 Supported Commands
+- `Today's schedule` / `Today`: View all arrangements for the current day.
+- `This week`: View your upcoming tasks for the week.
+- `Delete 1`: Delete the scheduled event with ID 1.
+- `Change time of 1 to 8 AM tomorrow`: Modify an existing schedule via natural language.
+
+---
+---
+
 # 📅 日程管家 (Schedule Butler)
 
 一个**全能型的跨平台生活记忆助手**。无论是工作开会、学生上课、户外活动，还是日常的吃药提醒，只需发一条消息，日程管家就会在关键时刻准时提醒你，不再错过任何重要瞬间！
@@ -21,7 +72,7 @@
 
 1. **环境准备**：请确保你的电脑已经安装了 `Python 3.10+`。
 2. **复制配置**：将目录下的 `.env.example` 复制一份并重命名为 `.env`。
-3. **填入 Token**：用记事本打开 `.env`，填入你的大模型 Token (如 Kimi) 和机器人渠道配置（如 Telegram Token 或 飞书 App ID）。
+3. **填入 Token**：用记事本打开 `.env`，填入你的大模型配置 (兼容 Kimi, DeepSeek, ChatGPT 等任何 OpenAI 格式) 和机器人渠道配置（如 Telegram Token 或 飞书 App ID）。
 4. **一键启动**：
    - **Windows 用户**：双击运行 `start.bat`。
    - **Mac/Linux 用户**：在终端运行 `bash start.sh`。
@@ -34,10 +85,6 @@
 如果你喜欢使用 Docker 保持环境纯净：
 ```bash
 docker-compose up -d
-```
-查看日志：
-```bash
-docker-compose logs -f
 ```
 
 ---

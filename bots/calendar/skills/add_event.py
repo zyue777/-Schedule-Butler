@@ -15,8 +15,8 @@ MANIFEST = SkillManifest(
 def handle(ctx: Context) -> Context:
     text = ctx.raw_text
     
-    from tools.kimi_client import KimiClient
-    kimi = KimiClient()
+    from tools.llm_client import LLMClient
+    llm = LLMClient()
     llm_json_str = ""
     
     # 1. OCR + LLM 解析 (图片路线)
@@ -44,8 +44,8 @@ def handle(ctx: Context) -> Context:
                 with urllib.request.urlopen(req, timeout=60) as resp:
                     img_bytes = resp.read()
                 
-                print("[add_event] 开始调用 Kimi 视觉 API 进行多模态解析...")
-                llm_json_str = kimi.extract_event_from_bytes(img_bytes)
+                print("[add_event] 开始调用 LLM 视觉 API 进行多模态解析...")
+                llm_json_str = llm.extract_event_from_bytes(img_bytes)
                 text = "图片日程记录" # Fallback raw text placeholder
             except Exception as e:
                 ctx.status = ContextStatus.ERROR
@@ -55,8 +55,8 @@ def handle(ctx: Context) -> Context:
     # 2. 纯文本 LLM 解析 (文本路线)
     elif text:
         try:
-            print("[add_event] 开始调用 Kimi API 进行纯文本结构化解析...")
-            llm_json_str = kimi.extract_event_from_text(text)
+            print("[add_event] 开始调用 LLM API 进行纯文本结构化解析...")
+            llm_json_str = llm.extract_event_from_text(text)
         except Exception as e:
             ctx.status = ContextStatus.ERROR
             ctx.error_message = f"文本智能解析失败: {e}"
