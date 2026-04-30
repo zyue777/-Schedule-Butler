@@ -1,0 +1,10 @@
+name: "calendar"
+label: "日程管家"
+description: "日程管家机器人"
+channel: "feishu_ws"
+channel_config:
+  enabled: true
+  app_id: "${FEISHU_APP_ID}"
+  app_secret: "${FEISHU_APP_SECRET}"
+startup_notify_users:
+  - "YOUR_USER_ID_HERE"

@@ -1,0 +1,8 @@
+python-dotenv
+requests
+apscheduler
+websocket-client
+PyYAML
+lark-oapi
+requests[socks]
+python-socks
