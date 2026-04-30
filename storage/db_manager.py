@@ -76,6 +76,16 @@ class DBManager:
                 cursor = conn.execute("SELECT * FROM events WHERE date >= ? AND status = 'active' ORDER BY date ASC, start_time ASC", (date_str,))
             return [dict(row) for row in cursor.fetchall()]
 
+    def get_week_events(self, start_date: str, end_date: str, user_id: str = None) -> list:
+        """获取指定日期区间内的活跃事件（含首尾）。"""
+        with sqlite3.connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            if user_id:
+                cursor = conn.execute("SELECT * FROM events WHERE date >= ? AND date <= ? AND user_id = ? AND status = 'active' ORDER BY date ASC, start_time ASC", (start_date, end_date, user_id))
+            else:
+                cursor = conn.execute("SELECT * FROM events WHERE date >= ? AND date <= ? AND status = 'active' ORDER BY date ASC, start_time ASC", (start_date, end_date))
+            return [dict(row) for row in cursor.fetchall()]
+
     def mark_reminded(self, event_id: int, rem_type: str):
         if rem_type == 'day':
             col = 'reminded_day'

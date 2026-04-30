@@ -43,10 +43,19 @@ Whether you are on Windows, Mac, or Linux, there is no complex setup required:
      LLM_MODEL="gpt-4o-mini"
      ```
 4. **One-Click Start**:
-   - **Windows Users**: Double-click `start.bat`.
-   - **Mac/Linux Users**: Run `bash start.sh` in your terminal.
+   - **Windows**: Double-click `start.bat`.
+   - **Mac**: Double-click `start_mac.command` in Finder. *(First time: right-click → Open → Open)*
+   - **Linux**: Run `bash start.sh` in your terminal.
 
 The script will automatically create a virtual environment, install necessary dependencies, and start the bot!
+
+---
+
+## 📱 Mobile Deployment
+| Platform | Supported? | How |
+|----------|:----------:|-----|
+| **Android** | ✅ | Install [Termux](https://termux.dev), then run `pkg install python` and `bash start.sh` — full functionality. |
+| **iPhone / iPad** | ❌ | iOS does not allow background Python processes. Use a cloud server instead, or run on a home PC/Mac and access via Telegram on your phone. |
 
 ---
 
@@ -59,10 +68,24 @@ docker-compose up -d
 ---
 
 ## 📝 Supported Commands
-- `Today's schedule` / `Today`: View all arrangements for the current day.
-- `This week`: View your upcoming tasks for the week.
-- `Delete 1`: Delete the scheduled event with ID 1.
-- `Change time of 1 to 8 AM tomorrow`: Modify an existing schedule via natural language.
+| Command | Function | Uses Token? |
+|---------|----------|:-----------:|
+| *(any text with a time)* | Add a new event via natural language | ✅ Yes |
+| `todo` / `待办` | List all events within the next 7 days | ❌ No |
+| `today's schedule` | View today's arrangements | ❌ No |
+| `this week` | View this week's schedule | ❌ No |
+| `delete 1` | Cancel the event with ID 1 | ❌ No |
+| `change 1 time to 8 AM` | Modify an existing event | ✅ Yes |
+| `help` / `guide` | Show the user guide | ❌ No |
+
+## 💡 Token-Saving Architecture
+
+Schedule Butler is designed to be **extremely token-efficient**. Out of all operations, **only 2 consume LLM tokens**:
+
+1. **Adding an event** — The LLM extracts structured data (time, title, location, etc.) from your natural language message. *One call per event.*
+2. **Modifying an event** — The LLM interprets your change intent (e.g., "change time to 8 AM"). *One call per modification.*
+
+Everything else — listing, deleting, reminders, daily briefings — runs on **pure rule-based logic and local database queries** with zero API calls. This means you can query your schedule hundreds of times a day without spending a single token.
 
 ---
 ---
@@ -111,9 +134,18 @@ docker-compose up -d
      ```
 4. **一键启动**：
    - **Windows 用户**：双击运行 `start.bat`。
-   - **Mac/Linux 用户**：在终端运行 `bash start.sh`。
+   - **Mac 用户**：在 Finder 中双击 `start_mac.command`。*（首次运行：右键 → 打开 → 打开）*
+   - **Linux 用户**：在终端运行 `bash start.sh`。
 
 系统将自动创建虚拟环境、安装所需依赖并启动机器人！
+
+---
+
+## 📱 手机部署
+| 平台 | 支持？ | 方式 |
+|------|:------:|------|
+| **Android 安卓** | ✅ | 安装 [Termux](https://termux.dev)，然后执行 `pkg install python` + `bash start.sh`，完整功能可用。 |
+| **iPhone / iPad** | ❌ | iOS 不允许后台运行 Python。建议用云服务器部署，或在家里的电脑/Mac 上运行，手机用 Telegram 访问。 |
 
 ---
 
@@ -126,9 +158,23 @@ docker-compose up -d
 ---
 
 ## 📝 支持的指令
-- `今日日程` / `今天日程`：查看当天的所有安排。
-- `本周日程`：查看未来一周的待办。
-- `删除 1`：删除 ID 为 1 的日程安排。
-- `修改 1 时间为明早8点`：通过自然语言修改已有的行程。
+| 指令 | 功能 | 消耗 Token？ |
+|------|---------|:-----------:|
+| *（任何含时间的文字）* | 自然语言录入日程 | ✅ 是 |
+| `待办` | 查看未来 7 天所有待办 | ❌ 否 |
+| `今日日程` / `今天日程` | 查看当天安排 | ❌ 否 |
+| `本周日程` | 查看本周日程 | ❌ 否 |
+| `删除 1` | 取消 ID 为 1 的日程 | ❌ 否 |
+| `修改 1 时间为8点` | 自然语言修改日程 | ✅ 是 |
+| `帮助` / `指南` | 显示使用指南 | ❌ 否 |
+
+## 💡 极致省 Token 架构
+
+日程管家的设计理念是**极致节约 Token**。所有操作中，**仅有 2 种场景消耗大模型 Token**：
+
+1. **录入日程** — 大模型从你的自然语言消息中提取结构化数据（时间、标题、地点等），*每条日程仅调用一次*。
+2. **修改日程** — 大模型解析你的修改意图（如「改时间为8点」），*每次修改仅调用一次*。
+
+其余所有操作 — 查看待办、删除日程、定时提醒、每日简报 — 均基于**纯规则引擎 + 本地数据库查询**，零 API 调用。这意味着你可以一天查询几百次日程，不花一分钱 Token。
 
 快来打造属于你的全能生活私人管家吧！

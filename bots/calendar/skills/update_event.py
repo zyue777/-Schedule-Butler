@@ -2,33 +2,36 @@ import re
 import json
 import sqlite3
 from core.context import Context, ContextStatus, SkillManifest
+from core.i18n import detect_lang, t
 from storage.db_manager import DBManager
 
 MANIFEST = SkillManifest(
     name="update_event",
     description="修改已有日程",
-    triggers=["修改"],
+    triggers=["修改", "change", "update", "edit"],
     version="1.0.0",
     priority=25
 )
 
-UPDATE_PROMPT = """你是日程修改助手。用户给出一条修改指令，请输出需要变更的字段 JSON（只包含要改的字段，不改的不输出）。
+UPDATE_PROMPT = """You are a schedule modification assistant. The user gives a change instruction — output ONLY the changed fields as JSON (omit unchanged fields).
+你是日程修改助手。用户给出修改指令，只输出需要变更的字段 JSON。
 
-可修改字段：title（标题）、date（YYYY-MM-DD）、start_time（HH:MM）、end_time（HH:MM）、location（地点）、notes（备注）、password（密码）
+Editable fields: title, date (YYYY-MM-DD), start_time (HH:MM), end_time (HH:MM), location, notes, password
 
-只输出纯 JSON，无代码块，无解释。示例：
+Output pure JSON only, no code blocks, no explanation. Examples:
 {"start_time": "08:00"}
 {"date": "2026-05-01", "start_time": "14:00"}
-{"title": "去吃火锅"}"""
+{"title": "Team dinner"}"""
 
 def handle(ctx: Context) -> Context:
     raw = ctx.raw_text.strip()
+    lang = detect_lang(raw)
 
     # 提取第一个数字作为 event_id
     m = re.search(r'\d+', raw)
     if not m:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = "请指定要修改的日程 ID，例如：修改 3 时间为8点"
+        ctx.reply_text = t('update_no_id', lang)
         return ctx
 
     event_id = int(m.group())
@@ -36,7 +39,7 @@ def handle(ctx: Context) -> Context:
     intent = raw[m.end():].strip()
     if not intent:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = f"请说明要改什么，例如：修改 {event_id} 时间为8点"
+        ctx.reply_text = t('update_no_intent', lang, id=event_id)
         return ctx
 
     db = DBManager()
@@ -49,7 +52,7 @@ def handle(ctx: Context) -> Context:
         ).fetchone()
     if not row:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = f"❌ 未找到 ID 为 {event_id} 的日程，或已取消。"
+        ctx.reply_text = t('update_not_found', lang, id=event_id)
         return ctx
 
     # 用统一 LLMClient 解析修改意图
@@ -85,24 +88,24 @@ def handle(ctx: Context) -> Context:
         changes = json.loads(changes_str)
     except Exception as e:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = f"❌ 解析修改内容失败，请换种说法，例如：修改 {event_id} 时间为8点"
+        ctx.reply_text = t('update_parse_fail', lang, id=event_id)
         return ctx
 
     if not changes:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = f"❓ 未识别到要修改的内容，请说明，例如：修改 {event_id} 时间为8点"
+        ctx.reply_text = t('update_empty', lang, id=event_id)
         return ctx
 
     ok = db.update_event(event_id, ctx.user_id, changes)
     if ok:
-        changed_desc = "、".join(
+        changed_desc = ", ".join(
             f"{k}→{v}" for k, v in changes.items()
             if k in ('title', 'date', 'start_time', 'end_time', 'location', 'notes', 'password')
         )
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = f"✅ 已修改 #{event_id}（{row[1]}）\n{changed_desc}"
+        ctx.reply_text = t('update_ok', lang, id=event_id, title=row[1], desc=changed_desc)
     else:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = f"❌ 修改失败，请稍后再试。"
+        ctx.reply_text = t('update_fail', lang)
 
     return ctx

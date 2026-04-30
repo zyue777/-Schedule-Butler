@@ -1,19 +1,21 @@
 import os
 from datetime import datetime, timedelta
 from core.context import Context, ContextStatus, SkillManifest
+from core.i18n import detect_lang, t
 from tools.event_parser import EventParser
 from storage.db_manager import DBManager
 
 MANIFEST = SkillManifest(
     name="add_event",
     description="自动解析会议通知并入库",
-    triggers=["添加", "新增"],
+    triggers=["添加", "新增", "add", "new"],
     version="1.0.0",
     priority=10
 )
 
 def handle(ctx: Context) -> Context:
     text = ctx.raw_text
+    lang = detect_lang(text or 'zh')
     
     from tools.llm_client import LLMClient
     llm = LLMClient()
@@ -68,7 +70,7 @@ def handle(ctx: Context) -> Context:
     
     if not event:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = "❓ 未识别到日程，如需记录请发含时间的事项\n例：明天下午3点开会 / 今晚7点吃火锅 / 每天早8点吃药"
+        ctx.reply_text = t('add_no_event', lang)
         return ctx
         
     db = DBManager()
@@ -94,7 +96,7 @@ def handle(ctx: Context) -> Context:
     except Exception:
         remind_str = ""
 
-    lines = [f"✅ 已记录 #{event_id}"]
+    lines = [f"✅ {'Recorded' if lang == 'en' else '已记录'} #{event_id}"]
     lines.append(f"📌 {event.title}")
     time_line = f"📅 {event.date}  {event.start_time}"
     if event.end_time:
@@ -105,7 +107,7 @@ def handle(ctx: Context) -> Context:
     if event.extra.get('organizer'):
         lines.append(f"🏢 {event.extra['organizer']}")
     if event.extra.get('password'):
-        lines.append(f"🔑 密码: {event.extra['password']}")
+        lines.append(f"🔑 {event.extra['password']}")
     if event.extra.get('phone'):
         lines.append(f"📞 {event.extra['phone']}")
     if event.extra.get('links'):
@@ -113,9 +115,11 @@ def handle(ctx: Context) -> Context:
     if event.extra.get('notes'):
         lines.append(f"📝 {event.extra['notes']}")
     if remind_str:
-        lines.append(f"⏰ {remind_str} 会提醒你")
-    lines.append(f"─────\n有误？发「修改 {event_id} 时间为8点」或「删除 {event_id}」")
+        lines.append(t('add_confirm', lang, remind=remind_str, id=event_id))
+    else:
+        lines.append(t('add_confirm_no_remind', lang, id=event_id))
 
     ctx.status = ContextStatus.SUCCESS
     ctx.reply_text = "\n".join(lines)
     return ctx
+
