@@ -2,7 +2,7 @@ import os
 import json
 import base64
 import requests
-from datetime import datetime
+from core.tz import today_weekday
 
 PROMPT = """You are a schedule assistant. Extract event info from the user's message into structured JSON.
 你是日程助手，从用户消息中提取日程信息并输出 JSON。
@@ -41,8 +41,7 @@ class LLMClient:
             "Content-Type": "application/json"
         }
         
-        today = datetime.now().strftime('%Y-%m-%d %A')
-        system_content = PROMPT + f"\n\n【今天日期】{today}"
+        system_content = PROMPT + f"\n\n[Today / 今天] {today_weekday()}"
 
         payload = {
             "model": self.model,

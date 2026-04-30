@@ -52,10 +52,38 @@ The script will automatically create a virtual environment, install necessary de
 ---
 
 ## 📱 Mobile Deployment
-| Platform | Supported? | How |
-|----------|:----------:|-----|
-| **Android** | ✅ | Install [Termux](https://termux.dev), then run `pkg install python` and `bash start.sh` — full functionality. |
-| **iPhone / iPad** | ❌ | iOS does not allow background Python processes. Use a cloud server instead, or run on a home PC/Mac and access via Telegram on your phone. |
+
+### Android (via Termux) ✅
+Your Android phone can run Schedule Butler 24/7 as a personal server:
+
+```bash
+# 1. Install Termux from F-Droid (not Play Store)
+#    https://f-droid.org/packages/com.termux/
+
+# 2. Set up Python environment
+pkg update && pkg upgrade
+pkg install python git
+
+# 3. Clone and configure
+git clone https://github.com/YOUR_USER/schedule-butler.git
+cd schedule-butler
+cp .env.example .env
+nano .env   # Fill in your tokens
+
+# 4. Launch
+bash start.sh
+
+# 5. (Optional) Keep running after closing Termux
+pkg install termux-services
+# Then use: nohup bash start.sh &
+```
+
+> 💡 **Tip**: To prevent Android from killing Termux in the background, go to **Settings → Battery → Termux → Unrestricted**.
+
+### iPhone / iPad ❌
+iOS does not allow background Python processes. Recommended alternatives:
+- Deploy on a cloud server (e.g., a $5/mo VPS) and access via Telegram on your phone.
+- Run on a home PC/Mac and use Telegram on your phone.
 
 ---
 
@@ -86,6 +114,41 @@ Schedule Butler is designed to be **extremely token-efficient**. Out of all oper
 2. **Modifying an event** — The LLM interprets your change intent (e.g., "change time to 8 AM"). *One call per modification.*
 
 Everything else — listing, deleting, reminders, daily briefings — runs on **pure rule-based logic and local database queries** with zero API calls. This means you can query your schedule hundreds of times a day without spending a single token.
+
+---
+
+## 🤖 Open-Source / Local Model Support
+
+Schedule Butler is fully compatible with locally hosted open-source models via [Ollama](https://ollama.com), [LM Studio](https://lmstudio.ai), or any OpenAI-compatible API server.
+
+### Recommended Models
+| Model | Size | Quality | Notes |
+|-------|------|:-------:|-------|
+| **Gemma 3 27B** | 27B | ⭐⭐⭐ | Best quality, needs 16GB+ VRAM |
+| **Gemma 3 14B** | 14B | ⭐⭐⭐ | Excellent, runs on 8GB+ VRAM |
+| **Qwen 2.5 14B** | 14B | ⭐⭐⭐ | Strong Chinese + English |
+| **Gemma 3 7B** | 7B | ⭐⭐ | Good for most tasks, occasional field omission |
+| **Qwen 2.5 7B** | 7B | ⭐⭐ | Solid bilingual performance |
+| **Gemma 3 4B** | 4B | ⭐ | Runs on phones (Android/Termux), English-only recommended |
+| **Gemma 3 1B** | 1B | ❌ | Too small for reliable structured JSON output |
+
+### Ollama Setup Example
+```bash
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Pull a model
+ollama pull gemma3:7b
+
+# It auto-starts an OpenAI-compatible server at localhost:11434
+```
+
+Then configure `.env`:
+```env
+LLM_API_KEY="ollama"
+LLM_API_URL="http://localhost:11434/v1/chat/completions"
+LLM_MODEL="gemma3:7b"
+```
 
 ---
 ---
@@ -142,10 +205,38 @@ Everything else — listing, deleting, reminders, daily briefings — runs on **
 ---
 
 ## 📱 手机部署
-| 平台 | 支持？ | 方式 |
-|------|:------:|------|
-| **Android 安卓** | ✅ | 安装 [Termux](https://termux.dev)，然后执行 `pkg install python` + `bash start.sh`，完整功能可用。 |
-| **iPhone / iPad** | ❌ | iOS 不允许后台运行 Python。建议用云服务器部署，或在家里的电脑/Mac 上运行，手机用 Telegram 访问。 |
+
+### Android 安卓（通过 Termux）✅
+你的安卓手机可以 24/7 运行日程管家：
+
+```bash
+# 1. 从 F-Droid 安装 Termux（不是 Play Store）
+#    https://f-droid.org/packages/com.termux/
+
+# 2. 安装 Python 环境
+pkg update && pkg upgrade
+pkg install python git
+
+# 3. 克隆并配置
+git clone https://github.com/YOUR_USER/schedule-butler.git
+cd schedule-butler
+cp .env.example .env
+nano .env   # 填入你的 Token
+
+# 4. 启动
+bash start.sh
+
+# 5. （可选）关闭 Termux 后保持运行
+pkg install termux-services
+# 然后用：nohup bash start.sh &
+```
+
+> 💡 **提示**：为防止安卓后台杀死 Termux，请到 **设置 → 电池 → Termux → 不受限制** 关闭省电优化。
+
+### iPhone / iPad ❌
+iOS 不允许后台运行 Python。替代方案：
+- 用云服务器部署（如 5美元/月的 VPS），手机用 Telegram 收消息。
+- 在家里电脑/Mac 上运行，手机用 Telegram 访问。
 
 ---
 
@@ -176,5 +267,40 @@ docker-compose up -d
 2. **修改日程** — 大模型解析你的修改意图（如「改时间为8点」），*每次修改仅调用一次*。
 
 其余所有操作 — 查看待办、删除日程、定时提醒、每日简报 — 均基于**纯规则引擎 + 本地数据库查询**，零 API 调用。这意味着你可以一天查询几百次日程，不花一分钱 Token。
+
+---
+
+## 🤖 开源/本地模型支持
+
+日程管家完全兼容通过 [Ollama](https://ollama.com)、[LM Studio](https://lmstudio.ai) 或任何 OpenAI 兼容 API 服务器本地部署的开源模型。
+
+### 推荐模型
+| 模型 | 参数量 | 质量 | 说明 |
+|------|------|:----:|------|
+| **Gemma 3 27B** | 27B | ⭐⭐⭐ | 最佳质量，需 16GB+ 显存 |
+| **Gemma 3 14B** | 14B | ⭐⭐⭐ | 优秀，8GB+ 显存可跑 |
+| **Qwen 2.5 14B** | 14B | ⭐⭐⭐ | 中英文双强 |
+| **Gemma 3 7B** | 7B | ⭐⭐ | 大多数任务可用，偶尔丢字段 |
+| **Qwen 2.5 7B** | 7B | ⭐⭐ | 中英双语稳定 |
+| **Gemma 3 4B** | 4B | ⭐ | 可跑在手机（Android/Termux），建议英文使用 |
+| **Gemma 3 1B** | 1B | ❌ | 太小，无法稳定输出结构化 JSON |
+
+### Ollama 配置示例
+```bash
+# 安装 Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# 拉取模型
+ollama pull gemma3:7b
+
+# 自动在 localhost:11434 启动 OpenAI 兼容服务
+```
+
+然后配置 `.env`：
+```env
+LLM_API_KEY="ollama"
+LLM_API_URL="http://localhost:11434/v1/chat/completions"
+LLM_MODEL="gemma3:7b"
+```
 
 快来打造属于你的全能生活私人管家吧！

@@ -59,10 +59,9 @@ def handle(ctx: Context) -> Context:
     try:
         from tools.llm_client import LLMClient
         llm = LLMClient()
-        from datetime import datetime
-        today = datetime.now().strftime('%Y-%m-%d %A')
+        from core.tz import today_weekday
 
-        system_content = UPDATE_PROMPT + f"\n\n【今天日期】{today}"
+        system_content = UPDATE_PROMPT + f"\n\n[Today / 今天] {today_weekday()}"
         headers = {
             "Authorization": f"Bearer {llm.api_key}",
             "Content-Type": "application/json"

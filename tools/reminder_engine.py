@@ -1,7 +1,8 @@
 import os
 import json
-from datetime import datetime, timedelta
+from datetime import timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
+from core.tz import now as tz_now
 from storage.db_manager import DBManager
 from tools.feishu_message import FeishuMessageSender
 from tools.feishu_token import FeishuTokenManager
@@ -42,7 +43,7 @@ class ReminderEngine:
         
     def send_daily_briefing(self):
         print("[ReminderEngine] 执行晚报推送（次日日程）")
-        tomorrow = datetime.now() + timedelta(days=1)
+        tomorrow = tz_now() + timedelta(days=1)
         tomorrow_str = tomorrow.strftime('%Y-%m-%d')
 
         import sqlite3
@@ -63,7 +64,7 @@ class ReminderEngine:
             self.msg_sender.send_card(user_id, card_data)
                 
     def check_30min_reminders(self):
-        now = datetime.now()
+        now = tz_now()
         target_time = now + timedelta(minutes=30)
         today_str = now.strftime('%Y-%m-%d')
         target_hm = target_time.strftime('%H:%M')
@@ -87,7 +88,7 @@ class ReminderEngine:
             print(f"[ReminderEngine] 触发30分钟提醒: {ev['title']}")
 
     def check_5min_reminders(self):
-        now = datetime.now()
+        now = tz_now()
         target_time = now + timedelta(minutes=5)
         today_str = now.strftime('%Y-%m-%d')
         target_hm = target_time.strftime('%H:%M')
@@ -111,7 +112,7 @@ class ReminderEngine:
             print(f"[ReminderEngine] 触发5分钟提醒: {ev['title']}")
 
     def check_event_completion(self):
-        now = datetime.now()
+        now = tz_now()
         today_str = now.strftime('%Y-%m-%d')
         current_hm = now.strftime('%H:%M')
 
@@ -129,7 +130,7 @@ class ReminderEngine:
             print(f"[ReminderEngine] 自动标记完成: {ev['title']} (end_time={ev['end_time']})")
 
     def clean_expired_events(self):
-        today_str = datetime.now().strftime('%Y-%m-%d')
+        today_str = tz_now().strftime('%Y-%m-%d')
         count = self.db.cleanup_expired_events(today_str)
         if count > 0:
             print(f"[ReminderEngine] 夜间自动清理：将 {count} 个历史日程标记为 done")
