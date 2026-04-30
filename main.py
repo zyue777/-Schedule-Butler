@@ -38,7 +38,14 @@ def main():
     # 直接使用 Registry 实例化 channel
     ch_registry = Registry("channels")
     ch_registry.discover(str(project_root / 'channels'), 'channels')
-    channel = ch_registry.get_instance(runtime.config.channel)
+    # 根据 .env 选择使用的通道
+    channel_name = runtime.config.channel
+    if active_bot == "telegram":
+        channel_name = "telegram"
+    elif active_bot == "feishu":
+        channel_name = "feishu_ws"
+        
+    channel = ch_registry.get_instance(channel_name)
     
     if not channel:
         print(f"[{bot_name}] 错误: 找不到 channel: {runtime.config.channel}。")
