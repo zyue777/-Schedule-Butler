@@ -23,7 +23,25 @@ Whether you are on Windows, Mac, or Linux, there is no complex setup required:
 
 1. **Prerequisites**: Make sure you have `Python 3.10+` installed on your computer.
 2. **Copy Config**: Copy the `.env.example` file in the directory and rename it to `.env`.
-3. **Fill in Tokens**: Open `.env` with a text editor. Fill in your LLM configuration (Supports Kimi, DeepSeek, ChatGPT, etc.) and your bot channel configuration (e.g., Telegram Bot Token).
+3. **Fill in Tokens**: Open `.env` with a text editor. Fill in your bot channel configuration (e.g., Telegram Bot Token) and your LLM settings. It is compatible with any OpenAI-format API. Example configurations:
+   - **Kimi (Moonshot)**:
+     ```env
+     LLM_API_KEY="sk-..."
+     LLM_API_URL="https://api.moonshot.cn/v1/chat/completions"
+     LLM_MODEL="moonshot-v1-8k"
+     ```
+   - **DeepSeek**:
+     ```env
+     LLM_API_KEY="sk-..."
+     LLM_API_URL="https://api.deepseek.com/chat/completions"
+     LLM_MODEL="deepseek-chat"
+     ```
+   - **OpenAI (ChatGPT)**:
+     ```env
+     LLM_API_KEY="sk-..."
+     LLM_API_URL="https://api.openai.com/v1/chat/completions"
+     LLM_MODEL="gpt-4o-mini"
+     ```
 4. **One-Click Start**:
    - **Windows Users**: Double-click `start.bat`.
    - **Mac/Linux Users**: Run `bash start.sh` in your terminal.
@@ -72,7 +90,25 @@ docker-compose up -d
 
 1. **环境准备**：请确保你的电脑已经安装了 `Python 3.10+`。
 2. **复制配置**：将目录下的 `.env.example` 复制一份并重命名为 `.env`。
-3. **填入 Token**：用记事本打开 `.env`，填入你的大模型配置 (兼容 Kimi, DeepSeek, ChatGPT 等任何 OpenAI 格式) 和机器人渠道配置（如 Telegram Token 或 飞书 App ID）。
+3. **填入 Token**：用记事本打开 `.env`，填入你的机器人渠道配置（如 Telegram Token）以及大模型配置。系统兼容任何提供 OpenAI 格式接口的大模型，你可以参考以下常用配置：
+   - **Kimi (月之暗面)**：
+     ```env
+     LLM_API_KEY="sk-..."
+     LLM_API_URL="https://api.moonshot.cn/v1/chat/completions"
+     LLM_MODEL="moonshot-v1-8k"
+     ```
+   - **DeepSeek (深度求索)**：
+     ```env
+     LLM_API_KEY="sk-..."
+     LLM_API_URL="https://api.deepseek.com/chat/completions"
+     LLM_MODEL="deepseek-chat"
+     ```
+   - **OpenAI (ChatGPT)**：
+     ```env
+     LLM_API_KEY="sk-..."
+     LLM_API_URL="https://api.openai.com/v1/chat/completions"
+     LLM_MODEL="gpt-4o-mini"
+     ```
 4. **一键启动**：
    - **Windows 用户**：双击运行 `start.bat`。
    - **Mac/Linux 用户**：在终端运行 `bash start.sh`。
