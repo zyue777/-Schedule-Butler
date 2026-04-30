@@ -18,10 +18,10 @@ def handle(ctx: Context) -> Context:
     is_future = "待办" in ctx.raw_text or "未来" in ctx.raw_text or "本周" in ctx.raw_text
     
     if is_future:
-        events = db.get_future_events(today_str)
+        events = db.get_future_events(today_str, ctx.user_id)
         title_prefix = "📅 待办/未来日程"
     else:
-        events = db.get_today_events(today_str)
+        events = db.get_today_events(today_str, ctx.user_id)
         title_prefix = f"📅 今日日程 ({today_str})"
         
     if not events:

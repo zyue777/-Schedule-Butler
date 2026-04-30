@@ -13,7 +13,7 @@ def main():
     load_dotenv()
     
     # 2. 从 .env 加载核心配置 (Channel 在各自的 runtime 校验)
-    active_bot = os.environ.get("ACTIVE_BOT", "calendar")
+    active_bot = os.environ.get("ACTIVE_BOT", "telegram")
 
     # 3. 初始化数据库和定时任务
     print("初始化数据库和定时任务...")
@@ -48,7 +48,7 @@ def main():
     channel = ch_registry.get_instance(channel_name)
     
     if not channel:
-        print(f"[{bot_name}] 错误: 找不到 channel: {runtime.config.channel}。")
+        print(f"[{bot_name}] 错误: 找不到 channel: {channel_name}。")
         sys.exit(1)
         
     # 优雅退出

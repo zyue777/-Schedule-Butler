@@ -68,7 +68,7 @@ def handle(ctx: Context) -> Context:
     
     if not event:
         ctx.status = ContextStatus.SUCCESS
-        ctx.reply_text = "❓ 未识别到日程，如需记录请发含时间的事项\n例：明天下午3点开会 / 今晚7点去伊利汇 / 每天早8点吃药"
+        ctx.reply_text = "❓ 未识别到日程，如需记录请发含时间的事项\n例：明天下午3点开会 / 今晚7点吃火锅 / 每天早8点吃药"
         return ctx
         
     db = DBManager()

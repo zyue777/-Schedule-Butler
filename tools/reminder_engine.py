@@ -67,16 +67,17 @@ class ReminderEngine:
         target_time = now + timedelta(minutes=30)
         today_str = now.strftime('%Y-%m-%d')
         target_hm = target_time.strftime('%H:%M')
+        current_hm = now.strftime('%H:%M')
         
         import sqlite3
         with sqlite3.connect(self.db.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            # 找到今天、未发送30分钟提醒、且时间在 30 分钟内 (或者刚刚过)的事件
+            # 找到今天、未发送30分钟提醒、且 start_time 在 (now, now+30min] 窗口内的事件
             cursor = conn.execute("""
                 SELECT * FROM events 
                 WHERE date = ? AND status = 'active' AND reminded_30 = 0 
-                AND start_time <= ? AND start_time > ?
-            """, (today_str, target_hm, now.strftime('%H:%M')))
+                AND start_time <= ? AND start_time >= ?
+            """, (today_str, target_hm, current_hm))
             events = [dict(row) for row in cursor.fetchall()]
             
         for ev in events:
@@ -90,15 +91,17 @@ class ReminderEngine:
         target_time = now + timedelta(minutes=5)
         today_str = now.strftime('%Y-%m-%d')
         target_hm = target_time.strftime('%H:%M')
+        current_hm = now.strftime('%H:%M')
         
         import sqlite3
         with sqlite3.connect(self.db.db_path) as conn:
             conn.row_factory = sqlite3.Row
+            # 找到今天、未发送5分钟提醒、且 start_time 在 (now, now+5min] 窗口内的事件
             cursor = conn.execute("""
                 SELECT * FROM events 
                 WHERE date = ? AND status = 'active' AND reminded_5 = 0 
-                AND start_time <= ? AND start_time > ?
-            """, (today_str, target_hm, now.strftime('%H:%M')))
+                AND start_time <= ? AND start_time >= ?
+            """, (today_str, target_hm, current_hm))
             events = [dict(row) for row in cursor.fetchall()]
             
         for ev in events:

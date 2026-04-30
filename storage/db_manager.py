@@ -58,16 +58,22 @@ class DBManager:
             ))
             return cursor.lastrowid
 
-    def get_today_events(self, date_str: str) -> list:
+    def get_today_events(self, date_str: str, user_id: str = None) -> list:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute("SELECT * FROM events WHERE date = ? AND status = 'active' ORDER BY start_time ASC", (date_str,))
+            if user_id:
+                cursor = conn.execute("SELECT * FROM events WHERE date = ? AND user_id = ? AND status = 'active' ORDER BY start_time ASC", (date_str, user_id))
+            else:
+                cursor = conn.execute("SELECT * FROM events WHERE date = ? AND status = 'active' ORDER BY start_time ASC", (date_str,))
             return [dict(row) for row in cursor.fetchall()]
 
-    def get_future_events(self, date_str: str) -> list:
+    def get_future_events(self, date_str: str, user_id: str = None) -> list:
         with sqlite3.connect(self.db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute("SELECT * FROM events WHERE date >= ? AND status = 'active' ORDER BY date ASC, start_time ASC", (date_str,))
+            if user_id:
+                cursor = conn.execute("SELECT * FROM events WHERE date >= ? AND user_id = ? AND status = 'active' ORDER BY date ASC, start_time ASC", (date_str, user_id))
+            else:
+                cursor = conn.execute("SELECT * FROM events WHERE date >= ? AND status = 'active' ORDER BY date ASC, start_time ASC", (date_str,))
             return [dict(row) for row in cursor.fetchall()]
 
     def mark_reminded(self, event_id: int, rem_type: str):
